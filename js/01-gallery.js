@@ -5,6 +5,7 @@ import { galleryItems } from './gallery-items.js';
 //* _____________Add img to page_____________
 
 const gallery = document.querySelector('.gallery');
+let instance;
 
 function addItem() {
   return galleryItems
@@ -23,21 +24,25 @@ gallery.insertAdjacentHTML('afterbegin', addItem(galleryItems));
 console.log(galleryItems);
 
 // * _____________Delegation_____________
+gallery.addEventListener('click', onImgClick);
 
-const onImgClick = event => {
-  //   event.preventDefault();
-  const currentItem = event.target;
+function onImgClick(event) {
+  event.preventDefault();
 
-  if (currentItem.nodeName !== 'IMG') {
+  if (event.target.nodeName !== 'IMG') {
     return;
   }
+  instance = basicLightbox.create(`<img src="${event.target.dataset.source}">`);
 
-  const currentImg = currentItem.datset.original;
+  instance.show();
+  window.addEventListener('keydown', onEscPressKey);
+}
 
-  //   const currentColor = currentItem.dataset.color;
-  //   const outputEl = currentItem.querySelector('.pallet__item-color');
+// *________________Escape____________________
 
-  //   outputEl.textContent = currentColor;
-};
-
-currentItem.addEventListener('click', onImgClick);
+function onEscPressKey(event) {
+  if (event.code === 'Escape') {
+    instance.close();
+  }
+  window.removeEventListener('keydown', onEscPressKey);
+}
